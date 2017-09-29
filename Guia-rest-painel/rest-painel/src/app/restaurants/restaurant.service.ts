@@ -1,0 +1,40 @@
+import { Injectable } from '@angular/core';
+import {Http, Headers } from '@angular/http';
+import { AppHttpService } from '../app-http.service';
+
+import 'rxjs/add/operator/toPromise';
+
+@Injectable()
+export class RestaurantService extends AppHttpService{
+    protected url: string;
+    protected header: Headers;
+
+    builder(resource: string = ''){
+       return super.builder('restaurants' + resource);
+    }
+
+    getCep(cep: number) {
+        let url = 'https://viacep.com.br/ws/' + cep + '/json/';
+        return this.request().get(url)
+            .toPromise()
+            .then((res) => {
+                return res.json() || {};
+            });
+    }
+
+    upload(url: string, data: Object) {
+         return this.http.post(this.url + '/' + url, data, {headers: this.header})
+            .toPromise()
+            .then((res) => {
+                return res.json() || {};
+            });
+    }
+
+    list(options: Object = {}){
+        return this.http.get(this.url, {headers: this.header})
+            .toPromise()
+            .then((res) => {
+                return res.json() || {};
+            });
+    }
+}
